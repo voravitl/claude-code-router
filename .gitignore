@@ -10,3 +10,17 @@ tsconfig.tsbuildinfo
 # Documentation build output
 docs/build
 docs/.docusaurus
+
+# Local runtime
+.claude-code-router.pid
+
+# Temp/backup configs
+config.json.bak*
+config.json.tmp
+config.json.new
+
+# Rotating logs
+logs/ccr-*.log
+
+# OMC state
+.omc/
