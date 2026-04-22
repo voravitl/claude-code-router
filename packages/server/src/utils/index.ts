@@ -9,13 +9,20 @@ import {
   PLUGINS_DIR,
 } from "@CCR/shared";
 
+// Private Map for .env isolation — avoids polluting process.env
+const _envMap = new Map<string, string>();
+
+export function _getEnv(key: string, fallback?: string): string | undefined {
+  return _envMap.get(key) ?? process.env[key] ?? fallback;
+}
+
 // Function to interpolate environment variables in config values
 const interpolateEnvVars = (obj: any): any => {
   if (typeof obj === "string") {
     // Replace $VAR_NAME or ${VAR_NAME} with environment variable values
     return obj.replace(/\$\{([^}]+)\}|\$([A-Z_][A-Z0-9_]*)/g, (match, braced, unbraced) => {
       const varName = braced || unbraced;
-      return process.env[varName] || match; // Keep original if env var doesn't exist
+      return _getEnv(varName, match); // Keep original if env var doesn't exist
     });
   } else if (Array.isArray(obj)) {
     return obj.map(interpolateEnvVars);
@@ -41,6 +48,7 @@ export const initDir = async () => {
   await ensureDir(HOME_DIR);
   await ensureDir(PLUGINS_DIR);
   await ensureDir(path.join(HOME_DIR, "logs"));
+  await ensureDir(path.join(HOME_DIR, "history"));
 };
 
 const createReadline = () => {
@@ -168,6 +176,11 @@ export const writeConfigFile = async (config: any) => {
 
 export const initConfig = async () => {
   const config = await readConfigFile();
-  Object.assign(process.env, config);
+  // Store config values in private Map instead of polluting process.env
+  for (const [key, value] of Object.entries(config)) {
+    if (typeof value === 'string') {
+      _envMap.set(key, value);
+    }
+  }
   return config;
 };

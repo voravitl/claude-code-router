@@ -24,6 +24,8 @@ import {
 } from "@CCR/shared";
 import fastifyMultipart from "@fastify/multipart";
 import AdmZip from "adm-zip";
+import { getRoutingHistory, getRoutingStats, clearRoutingHistory } from "./utils/history";
+import { getProviderHealth } from "./utils/health";
 
 export const createServer = async (config: any): Promise<any> => {
   const server = new Server(config);
@@ -97,6 +99,29 @@ export const createServer = async (config: any): Promise<any> => {
       })
     );
     return { transformers: transformerList };
+  });
+
+  // Analytics: Get routing history
+  app.get("/api/routing/history", async (req: any, reply: any) => {
+    const limit = parseInt(req.query.limit || "50", 10);
+    const offset = parseInt(req.query.offset || "0", 10);
+    return await getRoutingHistory(limit, offset);
+  });
+
+  // Analytics: Get routing stats
+  app.get("/api/routing/stats", async (req: any, reply: any) => {
+    return await getRoutingStats();
+  });
+
+  // Analytics: Clear routing history
+  app.delete("/api/routing/history", async (req: any, reply: any) => {
+    await clearRoutingHistory();
+    return { success: true, message: "Routing history cleared" };
+  });
+
+  // Health: Get provider health
+  app.get("/api/health/providers", async (req: any, reply: any) => {
+    return getProviderHealth();
   });
 
   // Add endpoint to save config.json with access control
