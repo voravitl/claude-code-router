@@ -76,12 +76,12 @@ export function Providers() {
   // Handle case where config is null or undefined
   if (!config) {
     return (
-      <Card className="flex h-full flex-col rounded-lg border shadow-sm">
-        <CardHeader className="flex flex-row items-center justify-between border-b p-4">
-          <CardTitle className="text-lg">{t("providers.title")}</CardTitle>
+      <Card className="flex h-full flex-col rounded-[2rem] border-white/70 bg-white/85 shadow-[0_30px_80px_rgba(15,23,42,0.12)] backdrop-blur">
+        <CardHeader className="flex flex-row items-center justify-between border-b border-slate-200/80 p-4">
+          <CardTitle className="text-lg text-slate-950">{t("providers.title")}</CardTitle>
         </CardHeader>
         <CardContent className="flex-grow flex items-center justify-center p-4">
-          <div className="text-gray-500">Loading providers configuration...</div>
+          <div className="text-slate-500">Loading providers configuration...</div>
         </CardContent>
       </Card>
     );
@@ -519,15 +519,15 @@ export function Providers() {
   });
 
   return (
-    <Card className="flex h-full flex-col rounded-lg border shadow-sm">
-      <CardHeader className="flex flex-col border-b p-4 gap-3">
+    <Card className="flex h-full flex-col rounded-[2rem] border-white/70 bg-white/85 shadow-[0_30px_80px_rgba(15,23,42,0.12)] backdrop-blur">
+      <CardHeader className="flex flex-col gap-3 border-b border-slate-200/80 p-4">
         <div className="flex flex-row items-center justify-between">
-          <CardTitle className="text-lg">{t("providers.title")} <span className="text-sm font-normal text-gray-500">({filteredProviders.length}/{validProviders.length})</span></CardTitle>
-          <Button onClick={handleAddProvider}>{t("providers.add")}</Button>
+          <CardTitle className="text-lg text-slate-950">{t("providers.title")} <span className="text-sm font-normal text-slate-500">({filteredProviders.length}/{validProviders.length})</span></CardTitle>
+          <Button onClick={handleAddProvider} className="rounded-2xl">{t("providers.add")}</Button>
         </div>
         <div className="flex items-center gap-2">
           <div className="relative flex-1">
-            <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-500" />
+            <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
             <Input
               placeholder={t("providers.search")}
               value={searchTerm}

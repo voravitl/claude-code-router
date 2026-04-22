@@ -26,12 +26,12 @@ export function Transformers() {
   // Handle case where config is null or undefined
   if (!config) {
     return (
-      <Card className="flex h-full flex-col rounded-lg border shadow-sm">
-        <CardHeader className="flex flex-row items-center justify-between border-b p-4">
-          <CardTitle className="text-lg">{t("transformers.title")}</CardTitle>
+      <Card className="flex h-full flex-col rounded-[2rem] border-white/70 bg-white/85 shadow-[0_30px_80px_rgba(15,23,42,0.12)] backdrop-blur">
+        <CardHeader className="flex flex-row items-center justify-between border-b border-slate-200/80 p-4">
+          <CardTitle className="text-lg text-slate-950">{t("transformers.title")}</CardTitle>
         </CardHeader>
         <CardContent className="flex-grow flex items-center justify-center p-4">
-          <div className="text-gray-500">Loading transformers configuration...</div>
+          <div className="text-slate-500">Loading transformers configuration...</div>
         </CardContent>
       </Card>
     );
@@ -101,10 +101,10 @@ export function Transformers() {
   };
 
   return (
-    <Card className="flex h-full flex-col rounded-lg border shadow-sm">
-      <CardHeader className="flex flex-row items-center justify-between border-b p-4">
-        <CardTitle className="text-lg">{t("transformers.title")} <span className="text-sm font-normal text-gray-500">({validTransformers.length})</span></CardTitle>
-        <Button onClick={handleAddTransformer}>{t("transformers.add")}</Button>
+    <Card className="flex h-full flex-col rounded-[2rem] border-white/70 bg-white/85 shadow-[0_30px_80px_rgba(15,23,42,0.12)] backdrop-blur">
+      <CardHeader className="flex flex-row items-center justify-between border-b border-slate-200/80 p-4">
+        <CardTitle className="text-lg text-slate-950">{t("transformers.title")} <span className="text-sm font-normal text-slate-500">({validTransformers.length})</span></CardTitle>
+        <Button onClick={handleAddTransformer} className="rounded-2xl">{t("transformers.add")}</Button>
       </CardHeader>
       <CardContent className="flex-grow overflow-y-auto p-4">
         <TransformerList

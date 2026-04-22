@@ -1,4 +1,4 @@
-import type { Config, Provider, Transformer } from '@/types';
+import type { Config, Provider, Transformer, RoutingEvent, RoutingStats, ProviderHealth } from '@/types';
 
 // 日志聚合响应类型
 interface GroupedLogsResponse {
@@ -322,6 +322,28 @@ class ApiClient {
   // Install preset from GitHub repository
   async installPresetFromGitHub(repo: string, name?: string): Promise<any> {
     return this.post<any>('/presets/install/github', { repo, name });
+  }
+
+  // ========== Analytics API methods ==========
+
+  // Get routing history
+  async getRoutingHistory(limit: number = 50, offset: number = 0): Promise<RoutingEvent[]> {
+    return this.get<RoutingEvent[]>(`/routing/history?limit=${limit}&offset=${offset}`);
+  }
+
+  // Get routing stats
+  async getRoutingStats(): Promise<RoutingStats> {
+    return this.get<RoutingStats>('/routing/stats');
+  }
+
+  // Clear routing history
+  async clearRoutingHistory(): Promise<void> {
+    return this.delete<void>('/routing/history');
+  }
+
+  // Get provider health
+  async getProviderHealth(): Promise<ProviderHealth[]> {
+    return this.get<ProviderHealth[]>('/health/providers');
   }
 }
 

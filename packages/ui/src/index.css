@@ -117,7 +117,17 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
+    min-height: 100vh;
+    font-family: "IBM Plex Sans", "SF Pro Display", "Segoe UI", sans-serif;
+    background:
+      radial-gradient(circle at top left, rgba(255, 255, 255, 0.82), transparent 32%),
+      linear-gradient(180deg, rgba(247, 245, 241, 0.94) 0%, rgba(238, 242, 247, 0.95) 45%, rgba(248, 250, 252, 1) 100%);
+  }
+
+  ::selection {
+    background: oklch(0.82 0.07 84);
+    color: oklch(0.2 0.01 255);
   }
 
   /* 美化滚动条 - WebKit浏览器 (Chrome, Safari, Edge) */

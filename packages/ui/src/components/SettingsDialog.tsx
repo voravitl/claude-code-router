@@ -175,7 +175,7 @@ export function SettingsDialog({ isOpen, onOpenChange }: SettingsDialogProps) {
               id="timeout"
               value={config.API_TIMEOUT_MS}
               onChange={(e) =>
-                setConfig({ ...config, API_TIMEOUT_MS: e.target.value })
+                setConfig({ ...config, API_TIMEOUT_MS: Number(e.target.value) || 0 })
               }
               className="transition-all-ease focus:scale-[1.01]"
             />

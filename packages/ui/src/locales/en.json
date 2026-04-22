@@ -298,5 +298,25 @@
       "apply": "Apply",
       "cancel": "Cancel"
     }
+  },
+  "analytics": {
+    "title": "Routing Intelligence",
+    "description": "Analytics & Observability",
+    "total_requests": "Total Requests",
+    "avg_latency": "Avg Latency",
+    "total_tokens": "Total Tokens",
+    "error_rate": "Error Rate",
+    "distribution": "Model Distribution",
+    "provider_share": "Provider Share",
+    "health": "Provider Health",
+    "history": "Routing History",
+    "clear_history": "Clear History",
+    "refresh": "Refresh",
+    "success": "Success",
+    "error": "Error",
+    "latency": "Latency",
+    "tokens": "Tokens",
+    "time": "Time",
+    "status": "Status"
   }
 }

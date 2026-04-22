@@ -14,7 +14,7 @@ export function ProviderList({ providers, onEdit, onRemove }: ProviderListProps)
   if (!providers || !Array.isArray(providers)) {
     return (
       <div className="space-y-3">
-        <div className="flex items-center justify-center rounded-md border bg-white p-8 text-gray-500">
+        <div className="flex items-center justify-center rounded-[1.5rem] border border-dashed border-slate-300 bg-slate-50/70 p-8 text-slate-500">
           No providers configured
         </div>
       </div>
@@ -27,10 +27,10 @@ export function ProviderList({ providers, onEdit, onRemove }: ProviderListProps)
         // Handle case where individual provider might be null or undefined
         if (!provider) {
           return (
-            <div key={index} className="flex items-start justify-between rounded-md border bg-white p-4 transition-all hover:shadow-md animate-slide-in hover:scale-[1.01]">
+            <div key={index} className="animate-slide-in flex items-start justify-between rounded-[1.5rem] border border-slate-200/80 bg-slate-50/70 p-4 transition-all hover:scale-[1.01] hover:shadow-md">
               <div className="flex-1 space-y-1.5">
-                <p className="text-md font-semibold text-gray-800">Invalid Provider</p>
-                <p className="text-sm text-gray-500">Provider data is missing</p>
+                <p className="text-md font-semibold text-slate-800">Invalid Provider</p>
+                <p className="text-sm text-slate-500">Provider data is missing</p>
               </div>
               <div className="ml-4 flex flex-shrink-0 items-center gap-2">
                 <Button variant="ghost" size="icon" onClick={() => onEdit(index)} className="transition-all-ease hover:scale-110" disabled>
@@ -54,14 +54,14 @@ export function ProviderList({ providers, onEdit, onRemove }: ProviderListProps)
         const models = Array.isArray(provider.models) ? provider.models : [];
 
         return (
-          <div key={index} className="flex items-start justify-between rounded-md border bg-white p-4 transition-all hover:shadow-md animate-slide-in hover:scale-[1.01]">
+          <div key={index} className="animate-slide-in flex items-start justify-between rounded-[1.5rem] border border-slate-200/80 bg-slate-50/70 p-4 transition-all hover:scale-[1.01] hover:shadow-md">
             <div className="flex-1 space-y-1.5">
-              <p className="text-md font-semibold text-gray-800">{providerName}</p>
-              <p className="text-sm text-gray-500">{apiBaseUrl}</p>
+              <p className="text-md font-semibold text-slate-800">{providerName}</p>
+              <p className="text-sm text-slate-500">{apiBaseUrl}</p>
               <div className="flex flex-wrap gap-2 pt-2">
                 {models.map((model, modelIndex) => (
                   // Handle case where model might be null or undefined
-                  <Badge key={modelIndex} variant="outline" className="font-normal transition-all-ease hover:scale-105">
+                  <Badge key={modelIndex} variant="outline" className="font-normal transition-all-ease border-slate-300 bg-white/85 hover:scale-105">
                     {model || "Unnamed Model"}
                   </Badge>
                 ))}

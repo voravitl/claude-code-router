@@ -297,5 +297,25 @@
       "apply": "应用",
       "cancel": "取消"
     }
+  },
+  "analytics": {
+    "title": "路由智能",
+    "description": "分析与观测",
+    "total_requests": "总请求数",
+    "avg_latency": "平均延迟",
+    "total_tokens": "总 Token 数",
+    "error_rate": "错误率",
+    "distribution": "模型分布",
+    "provider_share": "供应商份额",
+    "health": "供应商健康状况",
+    "history": "路由历史",
+    "clear_history": "清除历史",
+    "refresh": "刷新",
+    "success": "成功",
+    "error": "错误",
+    "latency": "延迟",
+    "tokens": "Token",
+    "time": "时间",
+    "status": "状态"
   }
 }
