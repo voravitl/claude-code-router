@@ -1,0 +1,16 @@
+{
+  "Providers": [
+    {
+      "name": "ollama",
+      "api_base_url": "http://localhost:11434/v1/chat/completions",
+      "api_key": "ollama",
+      "models": [
+        "m1"
+      ]
+    }
+  ],
+  "Router": {
+    "default": "ollama,m1"
+  },
+  "transformers": []
+}

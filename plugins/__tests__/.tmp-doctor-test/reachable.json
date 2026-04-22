@@ -1,0 +1,17 @@
+{
+  "PORT": 9999,
+  "Providers": [
+    {
+      "name": "reachable",
+      "api_base_url": "http://127.0.0.1:63225/",
+      "api_key": "k",
+      "models": [
+        "m1"
+      ]
+    }
+  ],
+  "Router": {
+    "default": "reachable,m1"
+  },
+  "transformers": []
+}

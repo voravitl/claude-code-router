@@ -1,0 +1,155 @@
+{
+  "LOG": true,
+  "LOG_LEVEL": "info",
+  "STATUS_LINE": true,
+  "API_TIMEOUT_MS": 3000000,
+  "CUSTOM_ROUTER_PATH": "/Users/voravit.l/.claude-code-router/plugins/orchestrator-router.js",
+  "transformers": [
+    {
+      "path": "/Users/voravit.l/.claude-code-router/plugins/smart-optimizer.transformer.js",
+      "options": {
+        "enableRolePrompt": true,
+        "enableStructuredPrompt": true,
+        "enableChainOfThought": true,
+        "enableCompression": true,
+        "maxContextTokens": 100000,
+        "compressionThreshold": 0.8,
+        "enableTokenCounting": true,
+        "enableHistoryTruncation": true,
+        "preserveSystemPrompt": true,
+        "effortOverride": {
+          "glm-5.1": "none",
+          "devstral-2": "none",
+          "minimax-m2.7": "none",
+          "gemini-3-flash-preview": "none",
+          "kimi-k2.6": "none"
+        }
+      }
+    },
+    {
+      "path": "/Users/voravit.l/.claude-code-router/plugins/response-optimizer.transformer.js",
+      "options": {
+        "enableMetadata": false,
+        "enableErrorEnhancement": true,
+        "enableRetry": true,
+        "maxRetries": 3,
+        "baseDelayMs": 1000,
+        "maxDelayMs": 60000
+      }
+    },
+    {
+      "path": "/Users/voravit.l/.claude-code-router/plugins/circuit-breaker.transformer.js",
+      "options": {
+        "enabled": true,
+        "failureThreshold": 3,
+        "cooldownMs": 30000,
+        "halfOpenMaxRequests": 1
+      }
+    },
+    {
+      "path": "/Users/voravit.l/.claude-code-router/plugins/cache-control.transformer.js",
+      "options": {
+        "enabled": true,
+        "mode": "hybrid",
+        "maxBreakpoints": 4,
+        "minTokens": 1024
+      }
+    },
+    {
+      "path": "/Users/voravit.l/.claude-code-router/plugins/auth-forwarder.transformer.js"
+    },
+    {
+      "path": "/Users/voravit.l/.claude-code-router/plugins/reasoning-normalizer.transformer.js",
+      "options": {
+        "enabled": false,
+        "outputFormat": "thinking",
+        "providerFormats": {
+          "ollama": "reasoning_content",
+          "deepseek": "think_tag",
+          "anthropic": "thinking"
+        }
+      }
+    },
+    {
+      "path": "/Users/voravit.l/.claude-code-router/plugins/tool-mode.transformer.js",
+      "options": {
+        "enabled": true,
+        "models": ["devstral*", "glm*", "kimi*"],
+        "exitToolName": "ExitTool",
+        "systemPrompt": "Tool mode is active. The user expects you to proactively execute the most suitable tool. If no tool is appropriate, call ExitTool to exit tool mode and respond in plain text."
+      }
+    },
+    {
+      "path": "/Users/voravit.l/.claude-code-router/plugins/progressive-tool-disclosure.transformer.js",
+      "options": {
+        "enabled": true,
+        "strategy": "auto",
+        "threshold": 30
+      }
+    }
+  ],
+  "Providers": [
+    {
+      "name": "ollama",
+      "api_base_url": "http://localhost:11434/v1/chat/completions",
+      "api_key": "ollama",
+      "models": [
+        "glm-5.1:cloud",
+        "glm-5:cloud",
+        "glm-4.7:cloud",
+        "gemma4:31b-cloud",
+        "qwen3.5:cloud",
+        "qwen3-coder-next:cloud",
+        "qwen3-next:80b-cloud",
+        "qwen3-vl:235b-cloud",
+        "qwen3-vl:235b-instruct-cloud",
+        "kimi-k2.5:cloud",
+        "kimi-k2.6:cloud",
+        "minimax-m2.7:cloud",
+        "minimax-m2:cloud",
+        "gemini-3-flash-preview:cloud",
+        "devstral-2:123b-cloud",
+        "devstral-small-2:24b-cloud",
+        "nemotron-3-super:cloud",
+        "nemotron-3-nano:30b-cloud",
+        "ministral-3:14b-cloud",
+        "mistral-large-3:675b-cloud",
+        "rnj-1:8b-cloud",
+        "cogito-2.1:671b-cloud"
+      ]
+    },
+    {
+      "name": "gemini-oauth",
+      "api_base_url": "https://generativelanguage.googleapis.com/v1beta/models/",
+      "api_key": "$GEMINI_API_KEY",
+      "models": [
+        "gemini-2.5-flash",
+        "gemini-2.5-pro"
+      ],
+      "transformer": {
+        "use": ["gemini"]
+      }
+    }
+  ],
+  "Router": {
+    "default": "ollama,devstral-2:123b-cloud",
+    "think": "ollama,glm-5.1:cloud",
+    "code": "ollama,devstral-2:123b-cloud",
+    "codeReview": "ollama,minimax-m2.7:cloud",
+    "background": "ollama,gemini-3-flash-preview:cloud",
+    "image": "ollama,gemini-3-flash-preview:cloud",
+    "longContext": "ollama,kimi-k2.6:cloud",
+    "haikuModels": ["haiku", "gemini-3-flash", "qwen3.5"],
+    "longContextThreshold": 40000,
+    "opusKeyword": "opus"
+  },
+  "fallback": {
+    "default": ["ollama,glm-5.1:cloud"],
+    "think": ["ollama,glm-5.1:cloud"],
+    "code": ["ollama,glm-5.1:cloud"],
+    "codeReview": ["ollama,glm-5.1:cloud"],
+    "background": ["ollama,qwen3.5:cloud"],
+    "longContext": ["ollama,kimi-k2.5:cloud"],
+    "image": ["ollama,qwen3-vl:235b-cloud"]
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "Providers": [
+    {
+      "name": "empty-key",
+      "api_base_url": "http://localhost:99999/v1",
+      "api_key": "",
+      "models": [
+        "m1"
+      ]
+    },
+    {
+      "name": "placeholder-key",
+      "api_base_url": "http://localhost:99998/v1",
+      "api_key": "$MISSING_ENV_VAR",
+      "models": [
+        "m2"
+      ]
+    },
+    {
+      "name": "ollama-ok",
+      "api_base_url": "http://localhost:11434/v1/chat/completions",
+      "api_key": "ollama",
+      "models": [
+        "m3"
+      ]
+    }
+  ],
+  "Router": {
+    "default": "empty-key,m1"
+  },
+  "transformers": []
+}

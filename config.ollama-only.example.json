@@ -1,0 +1,64 @@
+{
+  "_comment": "Claude Code Router - Ollama Only Configuration",
+  "_description": "Configuration for using ONLY Ollama models (no API keys required)",
+
+  "LOG": true,
+  "LOG_LEVEL": "info",
+  "API_TIMEOUT_MS": 120000,
+
+  "_transformers_comment": "Optional transformers for optimization",
+  "transformers": [
+    {
+      "path": "~/.claude-code-router/plugins/prompt-optimizer.transformer.js",
+      "options": {
+        "enableRolePrompt": true,
+        "enableStructuredPrompt": true,
+        "enableChainOfThought": true,
+        "enableCompression": true
+      }
+    },
+    {
+      "path": "~/.claude-code-router/plugins/token-optimizer.transformer.js",
+      "options": {
+        "maxContextTokens": 100000,
+        "compressionThreshold": 0.8,
+        "enableCompression": true,
+        "enableHistoryTruncation": true
+      }
+    }
+  ],
+
+  "_providers_comment": "Ollama provider - no API key needed",
+  "Providers": [
+    {
+      "name": "ollama",
+      "api_base_url": "http://localhost:11434/v1/chat/completions",
+      "api_key": "ollama",
+      "models": [
+        "qwen2.5-coder:latest",
+        "qwen2.5-coder:32b",
+        "llama3.2:3b",
+        "llama3.2:1b",
+        "deepseek-r1:latest",
+        "command-r:latest",
+        "gemma2:latest"
+      ],
+      "transformer": {
+        "use": []
+      }
+    }
+  ],
+
+  "_router_comment": "All routes use Ollama models only",
+  "Router": {
+    "default": "qwen2.5-coder:latest",
+    "background": "llama3.2:3b",
+    "think": "deepseek-r1:latest",
+    "code": "qwen2.5-coder:latest",
+    "longContext": "command-r:latest",
+    "image": "llama3.2-vision:latest"
+  },
+
+  "_custom_router_comment": "Ollama-exclusive orchestrator router",
+  "CUSTOM_ROUTER_PATH": "~/.claude-code-router/plugins/orchestrator-router.js"
+}

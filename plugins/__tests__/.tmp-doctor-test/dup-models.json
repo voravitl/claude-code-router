@@ -1,0 +1,26 @@
+{
+  "Providers": [
+    {
+      "name": "p1",
+      "api_base_url": "http://localhost:99999/v1",
+      "api_key": "k1",
+      "models": [
+        "dup-model",
+        "unique-a"
+      ]
+    },
+    {
+      "name": "p2",
+      "api_base_url": "http://localhost:99998/v1",
+      "api_key": "k2",
+      "models": [
+        "dup-model",
+        "unique-b"
+      ]
+    }
+  ],
+  "Router": {
+    "default": "p1,dup-model"
+  },
+  "transformers": []
+}

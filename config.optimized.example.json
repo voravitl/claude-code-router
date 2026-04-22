@@ -1,0 +1,127 @@
+{
+  "_comment": "Claude Code Router - Prompt Optimization & Orchestration Config",
+  "_description": "Configuration for comprehensive prompt optimization and intelligent model routing",
+
+  "LOG": true,
+  "LOG_LEVEL": "info",
+  "API_TIMEOUT_MS": 120000,
+
+  "_transformers_comment": "Custom transformers for optimization",
+  "transformers": [
+    {
+      "path": "~/.claude-code-router/plugins/prompt-optimizer.transformer.js",
+      "options": {
+        "enableRolePrompt": true,
+        "enableContextExpansion": false,
+        "enableStructuredPrompt": true,
+        "enableExamples": false,
+        "enableChainOfThought": true,
+        "enableCompression": true
+      }
+    },
+    {
+      "path": "~/.claude-code-router/plugins/response-optimizer.transformer.js",
+      "options": {
+        "enableMetadata": true,
+        "enableErrorEnhancement": true,
+        "enableStreamOptimization": true,
+        "enableContentFiltering": false
+      }
+    },
+    {
+      "path": "~/.claude-code-router/plugins/token-optimizer.transformer.js",
+      "options": {
+        "maxContextTokens": 100000,
+        "compressionThreshold": 0.8,
+        "enableCompression": true,
+        "enableTokenCounting": true,
+        "enableHistoryTruncation": true,
+        "preserveSystemPrompt": true
+      }
+    }
+  ],
+
+  "_providers_comment": "Configure your providers below - add API keys as needed",
+  "Providers": [
+    {
+      "name": "openrouter",
+      "api_base_url": "https://openrouter.ai/api/v1/chat/completions",
+      "api_key": "$OPENROUTER_API_KEY",
+      "models": [
+        "anthropic/claude-sonnet-4",
+        "anthropic/claude-3.5-sonnet",
+        "anthropic/claude-3.7-sonnet:thinking",
+        "google/gemini-2.5-pro-preview",
+        "google/gemini-2.5-flash",
+        "deepseek/deepseek-chat"
+      ],
+      "transformer": {
+        "use": ["openrouter"]
+      }
+    },
+    {
+      "name": "deepseek",
+      "api_base_url": "https://api.deepseek.com/chat/completions",
+      "api_key": "$DEEPSEEK_API_KEY",
+      "models": [
+        "deepseek-chat",
+        "deepseek-reasoner"
+      ],
+      "transformer": {
+        "use": ["deepseek"],
+        "deepseek-chat": {
+          "use": ["tooluse"]
+        }
+      }
+    },
+    {
+      "name": "ollama",
+      "api_base_url": "http://localhost:11434/v1/chat/completions",
+      "api_key": "ollama",
+      "models": [
+        "qwen2.5-coder:latest",
+        "llama3.1:8b"
+      ]
+    },
+    {
+      "name": "gemini",
+      "api_base_url": "https://generativelanguage.googleapis.com/v1beta/models/",
+      "api_key": "$GEMINI_API_KEY",
+      "models": [
+        "gemini-2.5-flash",
+        "gemini-2.5-pro"
+      ],
+      "transformer": {
+        "use": ["gemini"]
+      }
+    },
+    {
+      "name": "dashscope",
+      "api_base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions",
+      "api_key": "$DASHSCOPE_API_KEY",
+      "models": [
+        "qwen3-coder-plus",
+        "qwen-max"
+      ],
+      "transformer": {
+        "use": [
+          ["maxtoken", { "max_tokens": 65536 }],
+          "enhancetool"
+        ]
+      }
+    }
+  ],
+
+  "_router_comment": "Intelligent routing is handled by custom router below",
+  "Router": {
+    "default": "deepseek,deepseek-chat",
+    "background": "ollama,qwen2.5-coder:latest",
+    "think": "deepseek,deepseek-reasoner",
+    "longContext": "openrouter,google/gemini-2.5-pro-preview",
+    "longContextThreshold": 60000,
+    "webSearch": "gemini,gemini-2.5-flash"
+  },
+
+  "_custom_router_comment": "Custom orchestrator router for intelligent model selection",
+  "CUSTOM_ROUTER_PATH": "~/.claude-code-router/plugins/orchestrator-router.js"
+}

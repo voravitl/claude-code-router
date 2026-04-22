@@ -1,0 +1,19 @@
+{
+  "PORT": 9999,
+  "API_TIMEOUT_MS": 30000,
+  "Providers": [
+    {
+      "name": "test-provider",
+      "api_base_url": "http://localhost:99999/v1",
+      "api_key": "test-key",
+      "models": [
+        "model-a",
+        "model-b"
+      ]
+    }
+  ],
+  "Router": {
+    "default": "test-provider,model-a"
+  },
+  "transformers": []
+}
