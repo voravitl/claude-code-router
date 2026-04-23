@@ -100,10 +100,10 @@ export function Login() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50">
-      <Card className="w-full max-w-md">
+    <div className="flex min-h-screen items-center justify-center bg-[radial-gradient(circle_at_top_left,rgba(241,245,249,0.95),transparent_38%),linear-gradient(180deg,#f7f5f1_0%,#eef2f7_45%,#f8fafc_100%)]">
+      <Card className="w-full max-w-md rounded-2xl border-slate-200 bg-white shadow-lg">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl">{t('login.title')}</CardTitle>
+          <CardTitle className="text-2xl font-bold text-[--foreground]">{t('login.title')}</CardTitle>
           <CardDescription>
             {t('login.description')}
           </CardDescription>

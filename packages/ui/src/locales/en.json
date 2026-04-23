@@ -30,7 +30,13 @@
     "log_viewer": "Log Viewer",
     "presets": "Presets",
     "language": "Language",
-    "check_updates": "Check for Updates"
+    "check_updates": "Check for Updates",
+    "tab_overview": "Overview",
+    "tab_routing": "Routing",
+    "tab_providers": "Providers",
+    "tab_transformers": "Transformers",
+    "config_missing": "Configuration not found",
+    "config_saved_restarting": "Saved. Restarting..."
   },
   "login": {
     "title": "Sign in to your account",
@@ -317,6 +323,7 @@
     "latency": "Latency",
     "tokens": "Tokens",
     "time": "Time",
-    "status": "Status"
+    "status": "Status",
+    "saved_tokens": "Saved Tokens"
   }
 }

@@ -3,7 +3,7 @@
   "Providers": [
     {
       "name": "reachable",
-      "api_base_url": "http://127.0.0.1:63225/",
+      "api_base_url": "http://127.0.0.1:50246/",
       "api_key": "k",
       "models": [
         "m1"

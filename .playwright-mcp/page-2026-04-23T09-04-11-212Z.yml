@@ -1,0 +1,304 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - heading "Claude Code Router" [level=1] [ref=e5]
+    - generic [ref=e6]:
+      - button [ref=e7]:
+        - img
+      - button [ref=e8]:
+        - img
+      - button [ref=e9]:
+        - img
+      - button [ref=e10]:
+        - img
+      - button [ref=e11]:
+        - img
+      - button [disabled]:
+        - generic:
+          - img
+      - button "Save" [ref=e12]:
+        - img
+        - text: Save
+      - button "Save and Restart" [ref=e13]:
+        - img
+        - text: Save and Restart
+  - main [ref=e14]:
+    - generic [ref=e16]:
+      - generic [ref=e17]:
+        - generic [ref=e18]:
+          - generic [ref=e19]:
+            - text: Providers
+            - generic [ref=e20]: (2/2)
+          - button "Add Provider" [ref=e21]
+        - generic [ref=e23]:
+          - img [ref=e24]
+          - textbox "Search providers..." [ref=e27]
+      - generic [ref=e29]:
+        - generic [ref=e30]:
+          - generic [ref=e31]:
+            - paragraph [ref=e32]: ollama
+            - paragraph [ref=e33]: http://localhost:11434/v1/chat/completions
+            - generic [ref=e34]:
+              - generic [ref=e35]: glm-5.1:cloud
+              - generic [ref=e36]: glm-5:cloud
+              - generic [ref=e37]: glm-4.7:cloud
+              - generic [ref=e38]: gemma4:31b-cloud
+              - generic [ref=e39]: qwen3.5:cloud
+              - generic [ref=e40]: qwen3-coder-next:cloud
+              - generic [ref=e41]: qwen3-next:80b-cloud
+              - generic [ref=e42]: qwen3-vl:235b-cloud
+              - generic [ref=e43]: qwen3-vl:235b-instruct-cloud
+              - generic [ref=e44]: kimi-k2.5:cloud
+              - generic [ref=e45]: kimi-k2.6:cloud
+              - generic [ref=e46]: minimax-m2.7:cloud
+              - generic [ref=e47]: minimax-m2:cloud
+              - generic [ref=e48]: gemini-3-flash-preview:cloud
+              - generic [ref=e49]: devstral-2:123b-cloud
+              - generic [ref=e50]: devstral-small-2:24b-cloud
+              - generic [ref=e51]: nemotron-3-super:cloud
+              - generic [ref=e52]: nemotron-3-nano:30b-cloud
+              - generic [ref=e53]: ministral-3:14b-cloud
+              - generic [ref=e54]: mistral-large-3:675b-cloud
+              - generic [ref=e55]: rnj-1:8b-cloud
+              - generic [ref=e56]: cogito-2.1:671b-cloud
+          - generic [ref=e57]:
+            - button [ref=e58]:
+              - img
+            - button [ref=e59]:
+              - img
+        - generic [ref=e60]:
+          - generic [ref=e61]:
+            - paragraph [ref=e62]: gemini-oauth
+            - paragraph [ref=e63]: https://generativelanguage.googleapis.com/v1beta/models/
+            - generic [ref=e64]:
+              - generic [ref=e65]: gemini-2.5-flash
+              - generic [ref=e66]: gemini-2.5-pro
+          - generic [ref=e67]:
+            - button [ref=e68]:
+              - img
+            - button [ref=e69]:
+              - img
+    - generic [ref=e70]:
+      - generic [ref=e72]:
+        - generic [ref=e74]: Router
+        - generic [ref=e75]:
+          - generic [ref=e76]:
+            - text: Default
+            - combobox [ref=e77]:
+              - text: ollama, devstral-2:123b-cloud
+              - img
+          - generic [ref=e78]:
+            - text: Background
+            - combobox [ref=e79]:
+              - text: ollama, gemini-3-flash-preview:cloud
+              - img
+          - generic [ref=e80]:
+            - text: Think
+            - combobox [ref=e81]:
+              - text: ollama, glm-5.1:cloud
+              - img
+          - generic [ref=e83]:
+            - generic [ref=e84]:
+              - text: Long Context
+              - combobox [ref=e85]:
+                - text: ollama, kimi-k2.6:cloud
+                - img
+            - generic [ref=e86]:
+              - text: Context Threshold
+              - textbox "60000" [ref=e87]: "40000"
+          - generic [ref=e88]:
+            - text: Web Search
+            - combobox [ref=e89]:
+              - text: Select a model...
+              - img
+          - generic [ref=e91]:
+            - generic [ref=e92]:
+              - generic [ref=e93]: Image (beta)
+              - combobox [ref=e94]:
+                - text: ollama, gemini-3-flash-preview:cloud
+                - img
+            - generic [ref=e95]:
+              - text: Force Use Image Agent
+              - combobox "Force Use Image Agent" [ref=e96]:
+                - option "No" [selected]
+                - option "Yes"
+      - generic [ref=e98]:
+        - generic [ref=e99]:
+          - generic [ref=e100]:
+            - text: Custom Transformers
+            - generic [ref=e101]: (8)
+          - button "Add Custom Transformer" [ref=e102]
+        - generic [ref=e104]:
+          - generic [ref=e105]:
+            - generic [ref=e106]:
+              - paragraph [ref=e107]: /Users/voravit.l/.claude-code-router/plugins/smart-optimizer.transformer.js
+              - generic [ref=e108]:
+                - generic [ref=e109]:
+                  - generic [ref=e110]: "enableRolePrompt:"
+                  - generic [ref=e111]: "true"
+                - generic [ref=e112]:
+                  - generic [ref=e113]: "enableStructuredPrompt:"
+                  - generic [ref=e114]: "true"
+                - generic [ref=e115]:
+                  - generic [ref=e116]: "enableChainOfThought:"
+                  - generic [ref=e117]: "true"
+                - generic [ref=e118]:
+                  - generic [ref=e119]: "enableCompression:"
+                  - generic [ref=e120]: "true"
+                - generic [ref=e121]:
+                  - generic [ref=e122]: "maxContextTokens:"
+                  - generic [ref=e123]: "100000"
+                - generic [ref=e124]:
+                  - generic [ref=e125]: "compressionThreshold:"
+                  - generic [ref=e126]: "0.8"
+                - generic [ref=e127]:
+                  - generic [ref=e128]: "enableTokenCounting:"
+                  - generic [ref=e129]: "true"
+                - generic [ref=e130]:
+                  - generic [ref=e131]: "enableHistoryTruncation:"
+                  - generic [ref=e132]: "true"
+                - generic [ref=e133]:
+                  - generic [ref=e134]: "preserveSystemPrompt:"
+                  - generic [ref=e135]: "true"
+                - generic [ref=e136]:
+                  - generic [ref=e137]: "effortOverride:"
+                  - generic [ref=e138]: "[object Object]"
+            - generic [ref=e139]:
+              - button [ref=e140]:
+                - img
+              - button [ref=e141]:
+                - img
+          - generic [ref=e142]:
+            - generic [ref=e143]:
+              - paragraph [ref=e144]: /Users/voravit.l/.claude-code-router/plugins/response-optimizer.transformer.js
+              - generic [ref=e145]:
+                - generic [ref=e146]:
+                  - generic [ref=e147]: "enableMetadata:"
+                  - generic [ref=e148]: "false"
+                - generic [ref=e149]:
+                  - generic [ref=e150]: "enableErrorEnhancement:"
+                  - generic [ref=e151]: "true"
+                - generic [ref=e152]:
+                  - generic [ref=e153]: "enableRetry:"
+                  - generic [ref=e154]: "true"
+                - generic [ref=e155]:
+                  - generic [ref=e156]: "maxRetries:"
+                  - generic [ref=e157]: "3"
+                - generic [ref=e158]:
+                  - generic [ref=e159]: "baseDelayMs:"
+                  - generic [ref=e160]: "1000"
+                - generic [ref=e161]:
+                  - generic [ref=e162]: "maxDelayMs:"
+                  - generic [ref=e163]: "60000"
+            - generic [ref=e164]:
+              - button [ref=e165]:
+                - img
+              - button [ref=e166]:
+                - img
+          - generic [ref=e167]:
+            - generic [ref=e168]:
+              - paragraph [ref=e169]: /Users/voravit.l/.claude-code-router/plugins/circuit-breaker.transformer.js
+              - generic [ref=e170]:
+                - generic [ref=e171]:
+                  - generic [ref=e172]: "enabled:"
+                  - generic [ref=e173]: "true"
+                - generic [ref=e174]:
+                  - generic [ref=e175]: "failureThreshold:"
+                  - generic [ref=e176]: "3"
+                - generic [ref=e177]:
+                  - generic [ref=e178]: "cooldownMs:"
+                  - generic [ref=e179]: "30000"
+                - generic [ref=e180]:
+                  - generic [ref=e181]: "halfOpenMaxRequests:"
+                  - generic [ref=e182]: "1"
+            - generic [ref=e183]:
+              - button [ref=e184]:
+                - img
+              - button [ref=e185]:
+                - img
+          - generic [ref=e186]:
+            - generic [ref=e187]:
+              - paragraph [ref=e188]: /Users/voravit.l/.claude-code-router/plugins/cache-control.transformer.js
+              - generic [ref=e189]:
+                - generic [ref=e190]:
+                  - generic [ref=e191]: "enabled:"
+                  - generic [ref=e192]: "true"
+                - generic [ref=e193]:
+                  - generic [ref=e194]: "mode:"
+                  - generic [ref=e195]: hybrid
+                - generic [ref=e196]:
+                  - generic [ref=e197]: "maxBreakpoints:"
+                  - generic [ref=e198]: "4"
+                - generic [ref=e199]:
+                  - generic [ref=e200]: "minTokens:"
+                  - generic [ref=e201]: "1024"
+            - generic [ref=e202]:
+              - button [ref=e203]:
+                - img
+              - button [ref=e204]:
+                - img
+          - generic [ref=e205]:
+            - generic [ref=e206]:
+              - paragraph [ref=e207]: /Users/voravit.l/.claude-code-router/plugins/auth-forwarder.transformer.js
+              - paragraph [ref=e208]: No parameters configured
+            - generic [ref=e209]:
+              - button [ref=e210]:
+                - img
+              - button [ref=e211]:
+                - img
+          - generic [ref=e212]:
+            - generic [ref=e213]:
+              - paragraph [ref=e214]: /Users/voravit.l/.claude-code-router/plugins/reasoning-normalizer.transformer.js
+              - generic [ref=e215]:
+                - generic [ref=e216]:
+                  - generic [ref=e217]: "enabled:"
+                  - generic [ref=e218]: "false"
+                - generic [ref=e219]:
+                  - generic [ref=e220]: "outputFormat:"
+                  - generic [ref=e221]: thinking
+                - generic [ref=e222]:
+                  - generic [ref=e223]: "providerFormats:"
+                  - generic [ref=e224]: "[object Object]"
+            - generic [ref=e225]:
+              - button [ref=e226]:
+                - img
+              - button [ref=e227]:
+                - img
+          - generic [ref=e228]:
+            - generic [ref=e229]:
+              - paragraph [ref=e230]: /Users/voravit.l/.claude-code-router/plugins/tool-mode.transformer.js
+              - generic [ref=e231]:
+                - generic [ref=e232]:
+                  - generic [ref=e233]: "enabled:"
+                  - generic [ref=e234]: "true"
+                - generic [ref=e235]:
+                  - generic [ref=e236]: "models:"
+                  - generic [ref=e237]: devstral*,glm*,kimi*
+                - generic [ref=e238]:
+                  - generic [ref=e239]: "exitToolName:"
+                  - generic [ref=e240]: ExitTool
+                - generic [ref=e241]:
+                  - generic [ref=e242]: "systemPrompt:"
+                  - generic [ref=e243]: Tool mode is active. The user expects you to proactively execute the most suitable tool. If no tool is appropriate, call ExitTool to exit tool mode and respond in plain text.
+            - generic [ref=e244]:
+              - button [ref=e245]:
+                - img
+              - button [ref=e246]:
+                - img
+          - generic [ref=e247]:
+            - generic [ref=e248]:
+              - paragraph [ref=e249]: /Users/voravit.l/.claude-code-router/plugins/progressive-tool-disclosure.transformer.js
+              - generic [ref=e250]:
+                - generic [ref=e251]:
+                  - generic [ref=e252]: "enabled:"
+                  - generic [ref=e253]: "true"
+                - generic [ref=e254]:
+                  - generic [ref=e255]: "strategy:"
+                  - generic [ref=e256]: auto
+                - generic [ref=e257]:
+                  - generic [ref=e258]: "threshold:"
+                  - generic [ref=e259]: "30"
+            - generic [ref=e260]:
+              - button [ref=e261]:
+                - img
+              - button [ref=e262]:
+                - img

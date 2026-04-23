@@ -218,6 +218,11 @@ async function getServer(options: RunOptions = {}) {
 
   serverInstance.addHook("onRequest", async (req: any) => {
     upstreamRequestStorage.enterWith(req);
+    // Extract session ID from common headers to enable analytics recording
+    req.sessionId = req.headers['anthropic-client-session-id'] || 
+                    req.headers['x-session-id'] || 
+                    req.headers['session-id'] || 
+                    'default-session';
   });
 
   // Add async preHandler hook for authentication
@@ -308,6 +313,7 @@ async function getServer(options: RunOptions = {}) {
           latencyMs,
           status,
           errorMessage,
+          tokenOptimization: req._tokenOptimization,
         }).catch((err) => console.error('Failed to record routing event:', err));
 
         const activeProvider = providerName !== 'unknown' ? providerName : undefined;

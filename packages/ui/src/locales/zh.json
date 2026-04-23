@@ -30,7 +30,13 @@
     "log_viewer": "日志查看器",
     "presets": "预设",
     "language": "语言",
-    "check_updates": "检查更新"
+    "check_updates": "检查更新",
+    "tab_overview": "概览",
+    "tab_routing": "路由",
+    "tab_providers": "提供商",
+    "tab_transformers": "转换器",
+    "config_missing": "未找到配置文件",
+    "config_saved_restarting": "保存成功，正在重启..."
   },
   "login": {
     "title": "登录到您的账户",
@@ -316,6 +322,7 @@
     "latency": "延迟",
     "tokens": "Token",
     "time": "时间",
-    "status": "状态"
+    "status": "状态",
+    "saved_tokens": "节省 Token"
   }
 }

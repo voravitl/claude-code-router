@@ -1,0 +1,3 @@
+[      47ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:3456/ui/analytics:0
+[  232850ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:3456/ui/analytics:0
+[  233645ms] [ERROR] Failed to load resource: the server responded with a status of 404 (Not Found) @ http://127.0.0.1:3456/ui/analytics:0

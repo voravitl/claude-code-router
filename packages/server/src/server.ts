@@ -390,6 +390,20 @@ export const createServer = async (config: any): Promise<any> => {
     return reply.redirect("/ui/");
   });
 
+  // SPA fallback: unknown /ui/* paths (React Router routes) serve index.html
+  app.setNotFoundHandler(async (req: any, reply: any) => {
+    if (req.url.startsWith("/ui/")) {
+      const indexPath = join(__dirname, "..", "dist", "index.html");
+      const html = readFileSync(indexPath, "utf8");
+      return reply.type("text/html").send(html);
+    }
+    return reply.status(404).send({
+      message: `Route ${req.method}:${req.url} not found`,
+      error: "Not Found",
+      statusCode: 404,
+    });
+  });
+
   // Get log file list endpoint
   app.get("/api/logs/files", async (req: any, reply: any) => {
     try {

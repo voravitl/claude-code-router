@@ -136,7 +136,7 @@ export function Analytics() {
                   <Activity className="h-3.5 w-3.5 text-indigo-500" />
                   {t('analytics.description')}
                 </div>
-                <h1 className="mt-1 text-2xl font-semibold tracking-tight text-slate-950">{t('analytics.title')}</h1>
+                <h1 className="mt-1 text-2xl font-bold tracking-tight text-[--foreground]">{t('analytics.title')}</h1>
               </div>
             </div>
 
@@ -153,7 +153,7 @@ export function Analytics() {
           </header>
 
           {/* Metrics Summary */}
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5 mb-6">
             <MetricCard 
               title={t('analytics.total_requests')} 
               value={stats?.totalRequests || 0} 
@@ -170,7 +170,15 @@ export function Analytics() {
               title={t('analytics.total_tokens')} 
               value={`${((stats?.totalInputTokens || 0) + (stats?.totalOutputTokens || 0)).toLocaleString()}`} 
               icon={<Cpu className="h-4 w-4 text-indigo-500" />}
-              description={`${stats?.totalInputTokens.toLocaleString()} in / ${stats?.totalOutputTokens.toLocaleString()} out`}
+              description={`${stats?.totalInputTokens?.toLocaleString() || 0} in / ${stats?.totalOutputTokens?.toLocaleString() || 0} out`}
+            />
+            <MetricCard 
+              title={t('analytics.saved_tokens')} 
+              value={stats?.totalSavedTokens?.toLocaleString() || 0} 
+              icon={<ShieldCheck className="h-4 w-4 text-emerald-500" />}
+              description="Tokens saved via optimization"
+              trend="up"
+              positive={true}
             />
             <MetricCard 
               title={t('analytics.error_rate')} 
@@ -183,7 +191,7 @@ export function Analytics() {
 
           <div className="grid gap-4 lg:grid-cols-[1fr_400px] mb-6">
             {/* Main Stats Card */}
-            <Card className="rounded-[2rem] border-white/70 bg-white/80 shadow-[0_24px_70px_rgba(15,23,42,0.08)] backdrop-blur">
+            <Card className="rounded-[2rem] border-white/70 bg-white/80 shadow-[0_24px_70px_rgba(15,23,42,0.08)] backdrop-blur interactive-surface">
               <CardHeader>
                 <CardTitle className="text-lg font-semibold flex items-center gap-2">
                   <BarChart3 className="h-5 w-5 text-indigo-500" />
@@ -220,7 +228,7 @@ export function Analytics() {
             </Card>
 
             {/* Provider Share */}
-            <Card className="rounded-[2rem] border-white/70 bg-white/80 shadow-[0_24px_70px_rgba(15,23,42,0.08)] backdrop-blur">
+            <Card className="rounded-[2rem] border-white/70 bg-white/80 shadow-[0_24px_70px_rgba(15,23,42,0.08)] backdrop-blur interactive-surface">
               <CardHeader>
                 <CardTitle className="text-lg font-semibold flex items-center gap-2">
                   <Globe className="h-5 w-5 text-indigo-500" />
@@ -320,6 +328,7 @@ export function Analytics() {
                         <th className="pb-3 font-semibold text-slate-500">{t('analytics.time')}</th>
                         <th className="pb-3 font-semibold text-slate-500">Provider / Model</th>
                         <th className="pb-3 font-semibold text-slate-500 text-center">{t('analytics.tokens')}</th>
+                        <th className="pb-3 font-semibold text-slate-500 text-center">{t('analytics.saved_tokens')}</th>
                         <th className="pb-3 font-semibold text-slate-500 text-center">{t('analytics.latency')}</th>
                         <th className="pb-3 font-semibold text-slate-500 text-right">{t('analytics.status')}</th>
                       </tr>
@@ -327,7 +336,7 @@ export function Analytics() {
                     <tbody className="divide-y divide-slate-100">
                       {history.length === 0 ? (
                         <tr>
-                          <td colSpan={5} className="py-8 text-center text-slate-400">No routing history found</td>
+                          <td colSpan={6} className="py-8 text-center text-slate-400">No routing history found</td>
                         </tr>
                       ) : (
                         history.map((event, idx) => (
@@ -341,6 +350,9 @@ export function Analytics() {
                             </td>
                             <td className="py-3 text-center tabular-nums">
                               <div className="text-xs text-slate-600">{event.inputTokens} / {event.outputTokens}</div>
+                            </td>
+                            <td className="py-3 text-center tabular-nums font-medium text-emerald-600">
+                              {event.tokenOptimization?.savedTokens ? `+${event.tokenOptimization.savedTokens.toLocaleString()}` : '-'}
                             </td>
                             <td className="py-3 text-center tabular-nums font-medium text-slate-700">
                               {event.latencyMs}ms
@@ -390,15 +402,17 @@ export function Analytics() {
   );
 }
 
-function MetricCard({ title, value, icon, description, trend }: { 
+function MetricCard({ title, value, icon, description, trend, positive }: { 
   title: string; 
   value: string | number; 
-  icon: React.ReactNode;
-  description: string;
+  icon: React.ReactNode; 
+  description: string; 
   trend?: 'up' | 'down';
+  positive?: boolean;
 }) {
+  const isGood = positive !== undefined ? positive : trend === 'down';
   return (
-    <Card className="rounded-[2rem] border-white/70 bg-white/80 shadow-[0_12px_40px_rgba(15,23,42,0.04)] backdrop-blur transition-all hover:shadow-[0_20px_50px_rgba(15,23,42,0.08)]">
+    <Card className="rounded-2xl border-slate-200 bg-white shadow-sm">
       <CardContent className="p-5">
         <div className="flex items-center justify-between mb-2">
           <div className="text-[11px] font-bold uppercase tracking-[0.2em] text-slate-400">{title}</div>
@@ -408,7 +422,7 @@ function MetricCard({ title, value, icon, description, trend }: {
           <div className="text-2xl font-bold tracking-tight text-slate-900">{value}</div>
           {trend && (
             <div className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
-              trend === 'down' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'
+              isGood ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600'
             }`}>
               {trend === 'down' ? '↓' : '↑'}
             </div>

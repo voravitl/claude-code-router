@@ -810,9 +810,28 @@ module.exports = class SmartOptimizerTransformer {
       }
     }
 
-    // 7. Analysis is now handled by orchestrator-router v5 (self-contained)
-    // CCR calls router BEFORE transformers, so model-suffix injection doesn't work
-    // Router does its own content analysis — smart-optimizer only handles prompt optimization
+    // 8. Capture final stats for analytics
+    let finalTokens = 0;
+    for (const msg of request.messages) {
+      finalTokens += this.estimateTokens(this.extractContent(msg));
+    }
+
+    if (!request._tokenOptimization) {
+      request._tokenOptimization = {
+        originalTokens: totalTokens,
+        optimizedTokens: finalTokens,
+        savedTokens: Math.max(0, totalTokens - finalTokens),
+        wasTruncated: false,
+        compressionRatio: totalTokens > 0 ? ((totalTokens - finalTokens) / totalTokens * 100).toFixed(2) + '%' : '0%',
+      };
+    } else {
+      // Update savedTokens if it was already set by truncation but further optimized
+      request._tokenOptimization.optimizedTokens = finalTokens;
+      request._tokenOptimization.savedTokens = Math.max(0, request._tokenOptimization.originalTokens - finalTokens);
+      request._tokenOptimization.compressionRatio = request._tokenOptimization.originalTokens > 0 
+        ? ((request._tokenOptimization.originalTokens - finalTokens) / request._tokenOptimization.originalTokens * 100).toFixed(2) + '%' 
+        : '0%';
+    }
 
     return request;
   }

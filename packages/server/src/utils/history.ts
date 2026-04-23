@@ -14,6 +14,13 @@ export interface RoutingEvent {
   latencyMs: number;
   status: "success" | "error";
   errorMessage?: string;
+  tokenOptimization?: {
+    originalTokens: number;
+    optimizedTokens: number;
+    savedTokens: number;
+    wasTruncated: boolean;
+    compressionRatio: string;
+  };
 }
 
 export interface RoutingStats {
@@ -22,6 +29,7 @@ export interface RoutingStats {
   errorRate: number;
   totalInputTokens: number;
   totalOutputTokens: number;
+  totalSavedTokens: number;
   avgLatencyMs: number;
   byModel: Record<string, { requests: number; inputTokens: number; outputTokens: number; avgLatencyMs: number; errors: number }>;
   byProvider: Record<string, { requests: number; inputTokens: number; outputTokens: number; avgLatencyMs: number; errors: number }>;
@@ -87,6 +95,7 @@ export async function getRoutingStats(): Promise<RoutingStats> {
     errorRate: 0,
     totalInputTokens: 0,
     totalOutputTokens: 0,
+    totalSavedTokens: 0,
     avgLatencyMs: 0,
     byModel: {},
     byProvider: {},
@@ -112,6 +121,7 @@ export async function getRoutingStats(): Promise<RoutingStats> {
         stats.totalRequests++;
         stats.totalInputTokens += event.inputTokens || 0;
         stats.totalOutputTokens += event.outputTokens || 0;
+        stats.totalSavedTokens += event.tokenOptimization?.savedTokens || 0;
         totalLatency += event.latencyMs || 0;
 
         if (event.status === "error") {
