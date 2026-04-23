@@ -746,6 +746,41 @@ export async function parseStatusLineData(input: StatusLineInput, presetName?: s
         const linesAdded = input.cost?.total_lines_added || 0;
         const linesRemoved = input.cost?.total_lines_removed || 0;
 
+        // Read provider status data
+        let providerHealth = "●";
+        let quotaRequests = "";
+        let quotaTokens = "";
+        let providerLatency = "";
+        let todayCost = "";
+        let activeProvider = "";
+
+        try {
+            const statusFilePath = path.join(homedir(), ".claude-code-router", "provider-status.json");
+            const statusContent = await fs.readFile(statusFilePath, "utf-8");
+            const statusData = JSON.parse(statusContent);
+            
+            // If we have an active model from transcript, try to find matching provider
+            const currentModelId = model;
+            const providers = statusData.providers || [];
+            
+            // For now, we'll try to guess active provider from model name if not explicitly set
+            // In a real scenario, the router would record this in the status file
+            activeProvider = statusData.activeProvider || "";
+            
+            const p = providers.find((prov: any) => prov.name === activeProvider) || providers[0];
+            
+            if (p) {
+                providerHealth = p.status === 'online' ? "●" : p.status === 'slow' ? "◐" : "○";
+                quotaRequests = p.requestsUsedPct !== null ? `${p.requestsUsedPct}%` : "";
+                quotaTokens = p.tokensUsedPct !== null ? `${p.tokensUsedPct}%` : "";
+                providerLatency = p.latencyMs ? `${p.latencyMs}ms` : "";
+                todayCost = p.todayCostUsd ? `$${p.todayCostUsd.toFixed(2)}` : "";
+                if (!activeProvider) activeProvider = p.name;
+            }
+        } catch (e) {
+            // Ignore error if status file not found
+        }
+
         // Define variable replacement mapping
         const variables: Record<string, string> = {
             workDirName,
@@ -767,7 +802,13 @@ export async function parseStatusLineData(input: StatusLineInput, presetName?: s
             linesRemoved: linesRemoved.toString(),
             netLines: (linesAdded - linesRemoved).toString(),
             version: input.version || '',
-            sessionId: input.session_id.substring(0, 8)
+            sessionId: input.session_id.substring(0, 8),
+            activeProvider,
+            providerHealth,
+            quotaRequests,
+            quotaTokens,
+            providerLatency,
+            todayCost
         };
 
         // Determine the style to use
