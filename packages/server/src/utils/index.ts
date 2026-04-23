@@ -22,7 +22,7 @@ const interpolateEnvVars = (obj: any): any => {
     // Replace $VAR_NAME or ${VAR_NAME} with environment variable values
     return obj.replace(/\$\{([^}]+)\}|\$([A-Z_][A-Z0-9_]*)/g, (match, braced, unbraced) => {
       const varName = braced || unbraced;
-      return _getEnv(varName, match); // Keep original if env var doesn't exist
+      return _getEnv(varName) ?? match; // Keep original if env var doesn't exist
     });
   } else if (Array.isArray(obj)) {
     return obj.map(interpolateEnvVars);

@@ -1,4 +1,9 @@
-import type { Provider } from "@CCR/shared";
+type Provider = {
+  name: string;
+  api_base_url: string;
+  api_key: string;
+  models: string[];
+};
 
 export interface ProviderHealth {
   name: string;

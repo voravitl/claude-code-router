@@ -13,13 +13,37 @@ import { SSESerializerTransform } from "./utils/SSESerializer.transform";
 import { rewriteStream } from "./utils/rewriteStream";
 import { recordRoutingEvent } from "./utils/history";
 import { startHealthChecks, stopHealthChecks } from "./utils/health";
+import { updateQuotaFromHeaders } from "./utils/quota";
 import JSON5 from "json5";
 import { IAgent, ITool } from "./agents/type";
 import agentsManager from "./agents";
 import { EventEmitter } from "node:events";
+import { AsyncLocalStorage } from "node:async_hooks";
 import { pluginManager, tokenSpeedPlugin } from "@musistudio/llms";
 
 const event = new EventEmitter()
+const upstreamRequestStorage = new AsyncLocalStorage<any>();
+let upstreamFetchCaptureInstalled = false;
+
+function installUpstreamFetchCapture(): void {
+  if (upstreamFetchCaptureInstalled) {
+    return;
+  }
+
+  const originalFetch = globalThis.fetch.bind(globalThis);
+  globalThis.fetch = (async (...args: Parameters<typeof fetch>): Promise<Response> => {
+    const response = await originalFetch(...args);
+    const trackedRequest = upstreamRequestStorage.getStore();
+
+    if (trackedRequest?.pathname?.endsWith("/v1/messages")) {
+      trackedRequest._upstreamHeaders = new Headers(response.headers);
+    }
+
+    return response;
+  }) as typeof fetch;
+
+  upstreamFetchCaptureInstalled = true;
+}
 
 async function initializeClaudeConfig() {
   const homeDir = homedir();
@@ -93,6 +117,7 @@ async function registerPluginsFromConfig(serverInstance: any, config: any): Prom
 async function getServer(options: RunOptions = {}) {
   await initializeClaudeConfig();
   await initDir();
+  installUpstreamFetchCapture();
   const config = await initConfig();
 
   // Check if Providers is configured
@@ -191,6 +216,10 @@ async function getServer(options: RunOptions = {}) {
   // Register and configure plugins from config
   await registerPluginsFromConfig(serverInstance, config);
 
+  serverInstance.addHook("onRequest", async (req: any) => {
+    upstreamRequestStorage.enterWith(req);
+  });
+
   // Add async preHandler hook for authentication
   serverInstance.addHook("preHandler", async (req: any, reply: any) => {
     return new Promise<void>((resolve, reject) => {
@@ -248,11 +277,23 @@ async function getServer(options: RunOptions = {}) {
     event.emit('onError', request, reply, error);
   })
   serverInstance.addHook("onSend", (req: any, reply: any, payload: any, done: any) => {
-    if (req.sessionId && req.pathname.endsWith("/v1/messages")) {
+    if (req.sessionId && req.pathname?.endsWith("/v1/messages")) {
       const latencyMs = req._routingStartTime ? Date.now() - req._routingStartTime : 0;
-      const model = req.body?.model || '';
-      const [providerName, modelName] = model.split(',');
+      const model = typeof req.body?.model === "string" ? req.body.model : "";
+      const providerName =
+        typeof req.provider === "string" && req.provider
+          ? req.provider
+          : model.includes(",")
+            ? model.split(",")[0]
+            : "unknown";
+      const modelName = model.includes(",") ? model.split(",").slice(1).join(",") : model;
       const scenarioType = req.scenarioType || 'default';
+
+      if (providerName !== "unknown" && req._upstreamHeaders instanceof Headers) {
+        updateQuotaFromHeaders(providerName, req._upstreamHeaders).catch((error) => {
+          console.error("Failed to update provider quota:", error);
+        });
+      }
 
       const recordEvent = (status: 'success' | 'error', errorMessage?: string) => {
         const usage = sessionUsageCache.get(req.sessionId) || { input_tokens: 0, output_tokens: 0 };
@@ -300,6 +341,7 @@ async function getServer(options: RunOptions = {}) {
         }
         read(clonedStream);
         recordEvent('success');
+
         return done(null, originalStream)
       }
       sessionUsageCache.put(req.sessionId, payload.usage);
@@ -309,6 +351,7 @@ async function getServer(options: RunOptions = {}) {
           return done(payload.error, null)
         } else {
           recordEvent('success');
+
           return done(payload, null)
         }
       }

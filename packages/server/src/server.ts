@@ -26,6 +26,98 @@ import fastifyMultipart from "@fastify/multipart";
 import AdmZip from "adm-zip";
 import { getRoutingHistory, getRoutingStats, clearRoutingHistory } from "./utils/history";
 import { getProviderHealth } from "./utils/health";
+import { getProviderQuota, getProviderQuotas } from "./utils/quota";
+
+type ProviderRecord = {
+  name: string;
+  api_base_url: string;
+  api_key: string;
+  models: string[];
+  transformer?: {
+    use?: unknown[];
+  };
+  [key: string]: unknown;
+};
+
+type ConfigWithProviders = {
+  Providers?: ProviderRecord[];
+  [key: string]: unknown;
+};
+
+function isProviderRecord(value: unknown): value is ProviderRecord {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  const candidate = value as Partial<ProviderRecord>;
+  return (
+    typeof candidate.name === "string" &&
+    typeof candidate.api_base_url === "string" &&
+    typeof candidate.api_key === "string" &&
+    Array.isArray(candidate.models) &&
+    candidate.models.every((model) => typeof model === "string")
+  );
+}
+
+function parseProviderIndex(indexValue: string): number | null {
+  const parsedIndex = Number.parseInt(indexValue, 10);
+  return Number.isInteger(parsedIndex) && parsedIndex >= 0 ? parsedIndex : null;
+}
+
+function isAnthropicProvider(provider: ProviderRecord): boolean {
+  if (provider.api_base_url.includes("anthropic.com/v1/messages")) {
+    return true;
+  }
+
+  return provider.transformer?.use?.some(
+    (entry) => typeof entry === "string" && entry === "anthropic"
+  ) ?? false;
+}
+
+function hasProviderApiKey(provider: ProviderRecord): boolean {
+  const trimmedApiKey = provider.api_key.trim();
+  return trimmedApiKey.length > 0 && trimmedApiKey.toLowerCase() !== "none";
+}
+
+function buildProviderTestRequest(provider: ProviderRecord): {
+  body: Record<string, unknown>;
+  headers: Record<string, string>;
+} {
+  const model = provider.models[0];
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+
+  if (hasProviderApiKey(provider)) {
+    if (isAnthropicProvider(provider)) {
+      headers["x-api-key"] = provider.api_key;
+      headers["anthropic-version"] = "2023-06-01";
+    } else {
+      headers.Authorization = `Bearer ${provider.api_key}`;
+    }
+  }
+
+  if (isAnthropicProvider(provider)) {
+    return {
+      headers,
+      body: {
+        model,
+        messages: [{ role: "user", content: "hi" }],
+        max_tokens: 1,
+      },
+    };
+  }
+
+  return {
+    headers,
+    body: {
+      model,
+      messages: [{ role: "user", content: "hi" }],
+      max_tokens: 1,
+      stream: false,
+    },
+  };
+}
 
 export const createServer = async (config: any): Promise<any> => {
   const server = new Server(config);
@@ -123,6 +215,154 @@ export const createServer = async (config: any): Promise<any> => {
   app.get("/api/health/providers", async (req: any, reply: any) => {
     return getProviderHealth();
   });
+
+  // Providers: Quotas
+  app.get("/api/providers/quotas", async () => {
+    return getProviderQuotas();
+  });
+
+  app.get(
+    "/api/providers/:name/quota",
+    async (req: any, reply: any) => {
+      const quota = await getProviderQuota(req.params.name);
+      if (!quota) {
+        return reply.code(404).send({ error: "Provider quota not found" });
+      }
+
+      return quota;
+    }
+  );
+
+  // Providers: CRUD operations
+  app.get("/api/providers", async () => {
+    const currentConfig = (await readConfigFile()) as ConfigWithProviders;
+    return currentConfig.Providers || [];
+  });
+
+  app.post("/api/providers", async (req: any, reply: any) => {
+    if (!isProviderRecord(req.body)) {
+      return reply.code(400).send({ error: "Invalid provider payload" });
+    }
+
+    const currentConfig = (await readConfigFile()) as ConfigWithProviders;
+    const providers = Array.isArray(currentConfig.Providers) ? currentConfig.Providers : [];
+
+    if (providers.some((provider) => provider.name === req.body.name)) {
+      return reply.code(409).send({ error: "Provider name already exists" });
+    }
+
+    await backupConfigFile();
+    currentConfig.Providers = [...providers, req.body];
+    await writeConfigFile(currentConfig);
+
+    return { ok: true, index: currentConfig.Providers.length - 1 };
+  });
+
+  app.put(
+    "/api/providers/:index",
+    async (req: any, reply: any) => {
+      if (!isProviderRecord(req.body)) {
+        return reply.code(400).send({ error: "Invalid provider payload" });
+      }
+
+      const currentConfig = (await readConfigFile()) as ConfigWithProviders;
+      const providers = Array.isArray(currentConfig.Providers) ? currentConfig.Providers : [];
+      const providerIndex = parseProviderIndex(req.params.index);
+
+      if (providerIndex === null || providerIndex >= providers.length) {
+        return reply.code(404).send({ error: "Provider not found" });
+      }
+
+      const duplicateNameExists = providers.some(
+        (provider, index) => provider.name === req.body.name && index !== providerIndex
+      );
+
+      if (duplicateNameExists) {
+        return reply.code(409).send({ error: "Provider name already exists" });
+      }
+
+      await backupConfigFile();
+      providers[providerIndex] = req.body;
+      currentConfig.Providers = providers;
+      await writeConfigFile(currentConfig);
+
+      return { ok: true };
+    }
+  );
+
+  app.delete(
+    "/api/providers/:index",
+    async (req: any, reply: any) => {
+      const currentConfig = (await readConfigFile()) as ConfigWithProviders;
+      const providers = Array.isArray(currentConfig.Providers) ? currentConfig.Providers : [];
+      const providerIndex = parseProviderIndex(req.params.index);
+
+      if (providerIndex === null || providerIndex >= providers.length) {
+        return reply.code(404).send({ error: "Provider not found" });
+      }
+
+      await backupConfigFile();
+      providers.splice(providerIndex, 1);
+      currentConfig.Providers = providers;
+      await writeConfigFile(currentConfig);
+
+      return { ok: true };
+    }
+  );
+
+  app.post(
+    "/api/providers/:index/test",
+    async (req: any, reply: any) => {
+      const currentConfig = (await readConfigFile()) as ConfigWithProviders;
+      const providers = Array.isArray(currentConfig.Providers) ? currentConfig.Providers : [];
+      const providerIndex = parseProviderIndex(req.params.index);
+
+      if (providerIndex === null || providerIndex >= providers.length) {
+        return reply.code(404).send({ error: "Provider not found" });
+      }
+
+      const provider = providers[providerIndex];
+      if (!provider.models[0]) {
+        return reply.code(400).send({ error: "Provider has no models configured" });
+      }
+
+      const startedAt = Date.now();
+      const { body, headers } = buildProviderTestRequest(provider);
+
+      try {
+        const response = await fetch(provider.api_base_url, {
+          method: "POST",
+          headers,
+          body: JSON.stringify(body),
+          signal: AbortSignal.timeout(5000),
+        });
+
+        const latencyMs = Date.now() - startedAt;
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          return {
+            ok: false,
+            status: response.status,
+            error: errorText || response.statusText,
+            latencyMs,
+          };
+        }
+
+        return {
+          ok: true,
+          status: response.status,
+          latencyMs,
+        };
+      } catch (error: unknown) {
+        return {
+          ok: false,
+          error: error instanceof Error ? error.message : "Unknown provider test error",
+          latencyMs: Date.now() - startedAt,
+        };
+      }
+    }
+  );
 
   // Add endpoint to save config.json with access control
   app.post("/api/config", async (req: any, reply: any) => {
