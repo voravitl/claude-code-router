@@ -37,11 +37,12 @@ import {
   Cpu,
   Globe,
   CheckCircle2,
+  ShieldCheck,
   XCircle,
   HardDrive
 } from "lucide-react";
 import { api } from "@/lib/api";
-import { RoutingEvent, RoutingStats, ProviderHealth } from "@/types";
+import type { ProviderHealth, RoutingEvent, RoutingStats } from "@/types";
 import { Toast } from "@/components/ui/toast";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
