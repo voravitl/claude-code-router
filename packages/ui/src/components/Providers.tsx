@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useConfig } from "./ConfigProvider";
 import { ProviderList } from "./ProviderList";
+import { QuickAddProvider } from "./QuickAddProvider";
 import {
   Dialog,
   DialogContent,
@@ -14,7 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { X, Trash2, Plus, Eye, EyeOff, Search, XCircle } from "lucide-react";
+import { X, Trash2, Plus, Eye, EyeOff, Search, XCircle, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Combobox } from "@/components/ui/combobox";
 import { ComboInput } from "@/components/ui/combo-input";
@@ -28,6 +29,7 @@ export function Providers() {
   const { config, setConfig } = useConfig();
   const [editingProviderIndex, setEditingProviderIndex] = useState<number | null>(null);
   const [deletingProviderIndex, setDeletingProviderIndex] = useState<number | null>(null);
+  const [isQuickAddOpen, setIsQuickAddOpen] = useState(false);
   const [hasFetchedModels, setHasFetchedModels] = useState<Record<number, boolean>>({});
   const [providerParamInputs, setProviderParamInputs] = useState<Record<string, {name: string, value: string}>>({});
   const [modelParamInputs, setModelParamInputs] = useState<Record<string, {name: string, value: string}>>({});
@@ -523,7 +525,13 @@ export function Providers() {
       <CardHeader className="flex flex-col gap-3 border-b border-slate-200/80 p-4">
         <div className="flex flex-row items-center justify-between">
           <CardTitle className="text-lg text-slate-950">{t("providers.title")} <span className="text-sm font-normal text-slate-500">({filteredProviders.length}/{validProviders.length})</span></CardTitle>
-          <Button onClick={handleAddProvider} className="rounded-2xl">{t("providers.add")}</Button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => setIsQuickAddOpen(true)} className="rounded-2xl gap-2">
+              <Zap className="h-4 w-4 text-amber-500" />
+              Quick Add
+            </Button>
+            <Button onClick={handleAddProvider} className="rounded-2xl">{t("providers.add")}</Button>
+          </div>
         </div>
         <div className="flex items-center gap-2">
           <div className="relative flex-1">
@@ -553,6 +561,15 @@ export function Providers() {
           onRemove={handleSetDeletingProviderIndex}
         />
       </CardContent>
+
+      <QuickAddProvider 
+        isOpen={isQuickAddOpen}
+        onClose={() => setIsQuickAddOpen(false)}
+        onAdded={() => {
+          // Re-fetch config to see new provider
+          api.getConfig().then(newConfig => setConfig(newConfig));
+        }}
+      />
 
       {/* Edit Dialog */}
       <Dialog open={editingProviderIndex !== null} onOpenChange={(open) => {

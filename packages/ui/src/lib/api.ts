@@ -1,4 +1,12 @@
-import type { Config, Provider, Transformer, RoutingEvent, RoutingStats, ProviderHealth } from '@/types';
+import type {
+  Config,
+  Provider,
+  ProviderHealth,
+  ProviderQuota,
+  RoutingEvent,
+  RoutingStats,
+  Transformer,
+} from '@/types';
 
 // 日志聚合响应类型
 interface GroupedLogsResponse {
@@ -169,22 +177,37 @@ class ApiClient {
 
   // Get providers
   async getProviders(): Promise<Provider[]> {
-    return this.get<Provider[]>('/api/providers');
+    return this.get<Provider[]>('/providers');
   }
 
   // Add a new provider
-  async addProvider(provider: Provider): Promise<Provider> {
-    return this.post<Provider>('/api/providers', provider);
+  async addProvider(provider: Provider): Promise<{ ok: boolean; index: number }> {
+    return this.post<{ ok: boolean; index: number }>('/providers', provider);
   }
 
   // Update a provider
-  async updateProvider(index: number, provider: Provider): Promise<Provider> {
-    return this.post<Provider>(`/api/providers/${index}`, provider);
+  async updateProvider(index: number, provider: Provider): Promise<{ ok: boolean }> {
+    return this.put<{ ok: boolean }>(`/providers/${index}`, provider);
   }
 
   // Delete a provider
-  async deleteProvider(index: number): Promise<void> {
-    return this.delete<void>(`/api/providers/${index}`);
+  async deleteProvider(index: number): Promise<{ ok: boolean }> {
+    return this.delete<{ ok: boolean }>(`/providers/${index}`);
+  }
+
+  // Test provider connectivity
+  async testProvider(index: number): Promise<{ ok: boolean; latencyMs: number; status?: number; error?: string }> {
+    return this.post<{ ok: boolean; latencyMs: number; status?: number; error?: string }>(`/providers/${index}/test`, {});
+  }
+
+  // Get provider quotas (for Usage Dashboard)
+  async getProviderQuotas(): Promise<ProviderQuota[]> {
+    return this.get<ProviderQuota[]>('/providers/quotas');
+  }
+
+  // Get a single provider quota
+  async getProviderQuota(name: string): Promise<ProviderQuota> {
+    return this.get<ProviderQuota>(`/providers/${encodeURIComponent(name)}/quota`);
   }
 
   // Get transformers

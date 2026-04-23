@@ -8,6 +8,16 @@ export type RouteSlot =
   | "webSearch"
   | "image";
 
+export type ProviderAuthMethod = 'api-key' | 'env-var' | 'none';
+export type ProviderCategory = 'local' | 'cloud-subscription' | 'cloud-api';
+
+export interface ProviderCapabilities {
+  vision: boolean;
+  streaming: boolean;
+  functionCalling: boolean;
+  thinking: boolean;
+}
+
 export interface ProviderTransformer {
   use: (string | (string | Record<string, unknown> | { max_tokens: number })[])[];
   [key: string]: any;
@@ -19,6 +29,9 @@ export interface Provider {
   api_key: string;
   models: string[];
   transformer?: ProviderTransformer;
+  // New optional metadata fields (preserved by ConfigProvider)
+  _template?: string;           // e.g. "gemini-pro"
+  _capabilities?: ProviderCapabilities;
   [key: string]: any;
 }
 
@@ -125,3 +138,22 @@ export interface ProviderHealth {
   lastChecked: string;
   models: string[];
 }
+
+export interface ProviderQuota {
+  name: string;
+  requestsLimit: number | null;
+  requestsRemaining: number | null;
+  requestsReset: string | null;
+  tokensLimit: number | null;
+  tokensRemaining: number | null;
+  tokensReset: string | null;
+  todayRequests: number;
+  todayInputTokens: number;
+  todayOutputTokens: number;
+  todayCostUsd: number;
+  requestsUsedPct: number | null;
+  tokensUsedPct: number | null;
+  updatedAt: string;
+}
+
+export type ProviderQuotaAlertLevel = "ok" | "warning" | "critical";

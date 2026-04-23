@@ -4,6 +4,7 @@ import { Login } from '@/components/Login';
 import { DebugPage } from '@/components/DebugPage';
 import { Presets } from '@/components/Presets';
 import { Analytics } from '@/components/Analytics';
+import { ProviderUsageDashboard } from '@/components/ProviderUsageDashboard';
 import ProtectedRoute from '@/components/ProtectedRoute';
 import PublicRoute from '@/components/PublicRoute';
 
@@ -27,6 +28,10 @@ export const router = createMemoryRouter([
   {
     path: '/analytics',
     element: <ProtectedRoute><Analytics /></ProtectedRoute>,
+  },
+  {
+    path: '/providers/usage',
+    element: <ProtectedRoute><ProviderUsageDashboard /></ProtectedRoute>,
   },
   {
     path: '/debug',

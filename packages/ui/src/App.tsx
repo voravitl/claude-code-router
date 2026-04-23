@@ -24,6 +24,8 @@ import {
   FileText,
   FileCog,
   Route,
+  Activity,
+  Zap,
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
@@ -356,6 +358,16 @@ function App() {
                 </TooltipTrigger>
                 <TooltipContent>
                   <p>Analytics</p>
+                </TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" size="icon" onClick={() => navigate('/providers/usage')} className="rounded-2xl">
+                    <Zap className="h-5 w-5 text-amber-500" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Provider Usage</p>
                 </TooltipContent>
               </Tooltip>
               <Popover>
