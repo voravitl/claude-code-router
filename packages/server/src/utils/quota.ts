@@ -489,3 +489,65 @@ export function getAlertLevel(quota: ProviderQuota): ProviderQuotaAlertLevel {
 
   return "ok";
 }
+
+export async function writeProviderStatusFile(activeProvider?: string): Promise<void> {
+  const quotas = await getProviderQuotas();
+  const providers = quotas.map((q) => ({
+    name: q.name,
+    status: q.requestsUsedPct !== null && q.requestsUsedPct >= 100 ? "quota_exceeded" : "online",
+    latencyMs: null,
+    requestsUsedPct: q.requestsUsedPct,
+    tokensUsedPct: q.tokensUsedPct,
+    todayCostUsd: q.todayCostUsd,
+    alertLevel: getAlertLevel(q),
+    updatedAt: q.updatedAt,
+  }));
+
+  const statusData = {
+    activeProvider: activeProvider ?? providers[0]?.name ?? "",
+    providers,
+    totalTodayCostUsd: providers.reduce((sum, p) => sum + (p.todayCostUsd ?? 0), 0),
+    updatedAt: new Date().toISOString(),
+  };
+
+  const filePath = path.join(HOME_DIR, "provider-status.json");
+  await fs.writeFile(filePath, JSON.stringify(statusData, null, 2), "utf-8");
+}
+
+export async function writeHudProviderStats(sessionId: string, activeProvider?: string): Promise<void> {
+  const quotas = await getProviderQuotas();
+  const providers = quotas.map((q) => ({
+    name: q.name,
+    status: q.requestsUsedPct !== null && q.requestsUsedPct >= 100 ? "quota_exceeded" : "online",
+    latencyMs: null as number | null,
+    requestsUsedPct: q.requestsUsedPct,
+    tokensUsedPct: q.tokensUsedPct,
+    todayCostUsd: q.todayCostUsd,
+    alertLevel: getAlertLevel(q),
+  }));
+
+  const providerStats = {
+    activeProvider: activeProvider ?? providers[0]?.name ?? "",
+    providers,
+    totalTodayCostUsd: providers.reduce((sum, p) => sum + (p.todayCostUsd ?? 0), 0),
+    updatedAt: new Date().toISOString(),
+  };
+
+  const hudDir = path.join(HOME_DIR, ".omc", "state", "sessions", sessionId);
+  const hudFile = path.join(hudDir, "hud-state.json");
+
+  try {
+    await fs.mkdir(hudDir, { recursive: true });
+    let existing: Record<string, unknown> = {};
+    try {
+      const content = await fs.readFile(hudFile, "utf-8");
+      existing = JSON.parse(content);
+    } catch {
+      // file doesn't exist yet — start fresh
+    }
+    existing.providerStats = providerStats;
+    await fs.writeFile(hudFile, JSON.stringify(existing, null, 2), "utf-8");
+  } catch {
+    // non-fatal: HUD write failure should not affect routing
+  }
+}

@@ -13,7 +13,7 @@ import { SSESerializerTransform } from "./utils/SSESerializer.transform";
 import { rewriteStream } from "./utils/rewriteStream";
 import { recordRoutingEvent } from "./utils/history";
 import { startHealthChecks, stopHealthChecks } from "./utils/health";
-import { updateQuotaFromHeaders } from "./utils/quota";
+import { updateQuotaFromHeaders, writeProviderStatusFile, writeHudProviderStats } from "./utils/quota";
 import JSON5 from "json5";
 import { IAgent, ITool } from "./agents/type";
 import agentsManager from "./agents";
@@ -309,6 +309,10 @@ async function getServer(options: RunOptions = {}) {
           status,
           errorMessage,
         }).catch((err) => console.error('Failed to record routing event:', err));
+
+        const activeProvider = providerName !== 'unknown' ? providerName : undefined;
+        writeProviderStatusFile(activeProvider).catch(() => {});
+        writeHudProviderStats(req.sessionId, activeProvider).catch(() => {});
       };
 
       if (payload instanceof ReadableStream) {
