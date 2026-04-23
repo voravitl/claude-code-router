@@ -96,8 +96,8 @@ function _normalizeRoute(route) {
 // Mask sensitive values in content preview before logging
 function _sanitizePreview(content) {
   if (typeof content !== 'string') return content;
-  const sensitiveRe = /(api_key|apiKey|authorization|password|token|secret|credential|bearer)"?(\s*[:=]\s*|\s+)("[^"]*"|'[^']*'|[^\s,}]+(?:\s+[^\s,}]+)*)/gi;
-  return content.replace(sensitiveRe, (match, key, sep) => key + sep + '***MASKED***');
+  const sensitiveRe = /((?:api_key|apiKey|authorization|password|token|secret|credential|bearer)"?)(\s*[:=]\s*|\s+)("[^"]*"|'[^']*'|[^\s,}]+(?:\s+[^\s,}]+)*)/gi;
+  return content.replace(sensitiveRe, (match, key, sep) => key + (sep.trim() === '=' ? ': ' : sep) + '***MASKED***');
 }
 
 // Route mapping: analysisType → config key

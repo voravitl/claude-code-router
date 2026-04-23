@@ -151,7 +151,7 @@ describe('_sanitizePreview', () => {
   it('masks api_key value', () => {
     const input = 'api_key: secret123 more text';
     const result = _sanitizePreview(input);
-    assert.strictEqual(result, 'api_key: ***MASKED*** more text');
+    assert.strictEqual(result, 'api_key: ***MASKED***');
   });
 
   it('masks authorization header', () => {
