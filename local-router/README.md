@@ -64,11 +64,11 @@ alias claude-ccr='cd /path/to/claude-code-router/local-router && source .env && 
 ## Model switching inside Claude Code
 
 ```text
-/model zai,glm-5-turbo
-/model zai,glm-5.1
-/model gemini,gemini-2.5-pro
-/model ollama,qwen2.5-coder:latest
-/model openrouter,google/gemini-2.5-pro
+/model zai/glm-5-turbo
+/model zai/glm-5.1
+/model gemini/gemini-2.5-pro
+/model ollama/qwen2.5-coder:latest
+/model openrouter/google/gemini-2.5-pro
 ```
 
 ## Ollama
