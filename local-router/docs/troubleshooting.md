@@ -97,9 +97,9 @@ This setup does not depend on automatic retry after a provider returns a limit e
 Use manual fallback inside Claude Code:
 
 ```text
-/model gemini,gemini-2.5-pro
-/model ollama,qwen2.5-coder:latest
-/model zai,glm-5-turbo
+/model gemini/gemini-2.5-pro
+/model ollama/qwen2.5-coder:latest
+/model zai/glm-5-turbo
 ```
 
 If automatic retry after provider errors is required, add LiteLLM or a dedicated retry layer later.
