@@ -43,10 +43,10 @@ claude
 ## 4. Switch model manually
 
 ```text
-/model zai,glm-5-turbo
-/model zai,glm-5.1
-/model gemini,gemini-2.5-pro
-/model ollama,qwen2.5-coder:latest
+/model zai/glm-5-turbo
+/model zai/glm-5.1
+/model gemini/gemini-2.5-pro
+/model ollama/qwen2.5-coder:latest
 ```
 
 ## 5. Restart after config changes
