@@ -1,6 +1,9 @@
 services:
   claude-code-router:
-    image: musistudio/claude-code-router:latest
+    image: voravitl/claude-code-router-local:latest
+    build:
+      context: ..
+      dockerfile: local-router/Dockerfile.local
     container_name: claude-code-router
     ports:
       - "127.0.0.1:3456:3456"
