@@ -1,0 +1,23 @@
+services:
+  claude-code-router:
+    image: musistudio/claude-code-router:latest
+    container_name: claude-code-router
+    ports:
+      - "127.0.0.1:3456:3456"
+    volumes:
+      - ./config:/app/.claude-code-router
+      - ./config:/root/.claude-code-router
+    environment:
+      - HOST=0.0.0.0
+      - PORT=3456
+      - APIKEY=${CCR_APIKEY}
+      - LOG=true
+      - LOG_LEVEL=${LOG_LEVEL:-debug}
+      - API_TIMEOUT_MS=${API_TIMEOUT_MS:-600000}
+      - ZAI_API_KEY=${ZAI_API_KEY}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
