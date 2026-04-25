@@ -20,9 +20,9 @@
 
 - [ ] Start Claude Code with `ANTHROPIC_BASE_URL=http://127.0.0.1:3456`
 - [ ] Start Claude Code with `ANTHROPIC_AUTH_TOKEN` equal to `CCR_APIKEY`
-- [ ] `/model zai,glm-5-turbo` is accepted if Z.AI key is configured
-- [ ] `/model gemini,gemini-2.5-pro` is accepted if Gemini key is configured
-- [ ] `/model ollama,qwen2.5-coder:latest` is accepted if Ollama is running
+- [ ] `/model zai/glm-5-turbo` is accepted if Z.AI key is configured
+- [ ] `/model gemini/gemini-2.5-pro` is accepted if Gemini key is configured
+- [ ] `/model ollama/qwen2.5-coder:latest` is accepted if Ollama is running
 
 ## Provider validation
 
