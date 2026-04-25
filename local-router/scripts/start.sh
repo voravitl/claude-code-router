@@ -8,6 +8,11 @@ if [ ! -f .env ]; then
   exit 1
 fi
 
+set -a
+# shellcheck disable=SC1091
+source .env
+set +a
+
 docker compose up -d
 
 echo "CCR started."
@@ -17,4 +22,4 @@ curl -fsS http://127.0.0.1:3456/health || true
 echo
 echo "Web UI: http://127.0.0.1:3456/ui/"
 echo "Run Claude Code through CCR with:"
-echo "  source .env && ANTHROPIC_BASE_URL=http://127.0.0.1:3456 ANTHROPIC_AUTH_TOKEN=\"$CCR_APIKEY\" API_TIMEOUT_MS=${API_TIMEOUT_MS:-600000} claude"
+echo "  cd $(pwd) && source .env && ANTHROPIC_BASE_URL=http://127.0.0.1:3456 ANTHROPIC_AUTH_TOKEN=\"$CCR_APIKEY\" API_TIMEOUT_MS=${API_TIMEOUT_MS:-600000} claude"
