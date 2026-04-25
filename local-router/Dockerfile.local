@@ -1,0 +1,55 @@
+# Local build image for this fork/repository.
+# Use this when you want Docker to run the code from the current repo,
+# not the published upstream musistudio/claude-code-router image.
+
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+RUN npm install -g pnpm@latest && rm -rf /root/.npm
+
+COPY pnpm-workspace.yaml pnpm-lock.yaml package.json tsconfig.base.json ./
+COPY scripts ./scripts
+COPY packages/shared/package.json ./packages/shared/
+COPY packages/core/package.json ./packages/core/
+COPY packages/server/package.json ./packages/server/
+COPY packages/cli/package.json ./packages/cli/
+COPY packages/ui/package.json ./packages/ui/
+
+RUN pnpm install --frozen-lockfile && pnpm store prune
+
+COPY packages/shared ./packages/shared
+COPY packages/core ./packages/core
+COPY packages/server ./packages/server
+COPY packages/cli ./packages/cli
+COPY packages/ui ./packages/ui
+
+RUN pnpm build
+
+FROM node:20-alpine AS production
+
+RUN apk add --no-cache curl && \
+    npm install -g pm2 pm2-logrotate --no-scripts && \
+    pm2 install pm2-logrotate && \
+    pm2 set pm2-logrotate:max_size 100M && \
+    pm2 set pm2-logrotate:retain 5 && \
+    pm2 set pm2-logrotate:compress true && \
+    pm2 set pm2-logrotate:rotateInterval '0 0 * * *'
+
+WORKDIR /app
+
+COPY --from=builder /app/packages/core ./packages/core
+COPY --from=builder /app/packages/shared ./packages/shared
+COPY --from=builder /app/packages/server/node_modules ./packages/server/node_modules
+COPY --from=builder /app/packages/server/dist ./packages/server/dist
+COPY --from=builder /app/packages/ui/dist/. ./packages/server/dist/
+COPY packages/server/ecosystem.config.cjs /app/
+
+RUN mkdir -p /root/.claude-code-router/logs /app/.claude-code-router/logs
+
+EXPOSE 3456
+
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
+    CMD curl -f http://127.0.0.1:3456/health || exit 1
+
+CMD ["pm2-runtime", "start", "/app/ecosystem.config.cjs"]
